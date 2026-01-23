@@ -17,6 +17,5 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["vite/client"]
   },
-  "include": ["vue/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["**/*.vue", "**/*.ts", "**/*.tsx", "**/*.d.ts"]
 }
