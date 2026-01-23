@@ -1,29 +1,15 @@
+import { KTHTMLElement, ref } from 'kt.js';
+
 interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
 }
 
-interface ButtonData {
-  id: number;
-  label: string;
-}
-
-function EventHandlingTest({ onMetrics }: TestProps): HTMLDivElement {
-  const container = (<div></div>) as HTMLDivElement;
-  const buttonContainer = (
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 5px;"></div>
-  ) as HTMLDivElement;
-  const clickCountDiv = (
-    <div style="display: none; margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 4px;"></div>
-  ) as HTMLDivElement;
-
-  let clickCount = 0;
-  let buttons: HTMLButtonElement[] = [];
-
+export default function EventHandlingTest({ onMetrics }: TestProps) {
   const handleClick = (id: number): void => {
     const startTime = performance.now();
     clickCount++;
-    clickCountDiv.textContent = `Total Clicks: ${clickCount}`;
-    clickCountDiv.style.display = 'block';
+    clickCountDiv.value.textContent = `Total Clicks: ${clickCount}`;
+    clickCountDiv.value.style.display = 'block';
     const endTime = performance.now();
 
     onMetrics({
@@ -38,10 +24,10 @@ function EventHandlingTest({ onMetrics }: TestProps): HTMLDivElement {
     const startTime = performance.now();
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-    buttonContainer.innerHTML = '';
+    btns.value.innerHTML = '';
     buttons = [];
     clickCount = 0;
-    clickCountDiv.style.display = 'none';
+    clickCountDiv.value.style.display = 'none';
 
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
@@ -49,12 +35,12 @@ function EventHandlingTest({ onMetrics }: TestProps): HTMLDivElement {
         <button on:click={() => handleClick(i)} style="padding: 8px; font-size: 12px;">
           Btn {i}
         </button>
-      ) as HTMLButtonElement;
+      );
       buttons.push(btn);
       fragment.appendChild(btn);
     }
 
-    buttonContainer.appendChild(fragment);
+    btns.value.appendChild(fragment);
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -70,27 +56,35 @@ function EventHandlingTest({ onMetrics }: TestProps): HTMLDivElement {
   };
 
   const clearButtons = (): void => {
-    buttonContainer.innerHTML = '';
+    btns.value.innerHTML = '';
     buttons = [];
     clickCount = 0;
-    clickCountDiv.style.display = 'none';
+    clickCountDiv.value.style.display = 'none';
     onMetrics(null);
   };
 
-  const controls = (
-    <div class="controls">
-      <button on:click={() => createButtons(1000)}>Create 1000 Buttons</button>
-      <button on:click={() => createButtons(5000)}>Create 5000 Buttons</button>
-      <button on:click={clearButtons}>Clear</button>
+  let clickCount = 0;
+  let buttons: KTHTMLElement[] = [];
+  const btns = ref();
+  const clickCountDiv = ref();
+  const container = (
+    <div>
+      <h2>Event Handling Test</h2>
+      <div class="controls">
+        <button on:click={() => createButtons(1000)}>Create 1000 Buttons</button>
+        <button on:click={() => createButtons(5000)}>Create 5000 Buttons</button>
+        <button on:click={clearButtons}>Clear</button>
+      </div>
+      <div
+        ref={clickCountDiv}
+        style="display: none; margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 4px;"
+      ></div>
+      <div
+        ref={btns}
+        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 5px;"
+      ></div>
     </div>
   );
 
-  container.appendChild(<h2>Event Handling Test</h2>);
-  container.appendChild(controls);
-  container.appendChild(clickCountDiv);
-  container.appendChild(buttonContainer);
-
   return container;
 }
-
-export default EventHandlingTest;
