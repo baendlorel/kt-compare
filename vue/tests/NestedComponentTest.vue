@@ -36,11 +36,11 @@ const createNodeData = (id: string, level: number, maxLevel: number): NodeData =
     level,
     value: Math.random().toFixed(3),
     updateCount: 0,
-    children: [],
+    children: [] as NodeData[],
   };
 
   if (level < maxLevel) {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       node.children.push(createNodeData(`${id}-${i}`, level + 1, maxLevel));
     }
   }

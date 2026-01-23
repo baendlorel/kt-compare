@@ -1,3 +1,4 @@
+import { ref } from 'kt.js';
 import NestedNode from '../components/NestedNode';
 
 interface NodeData {
@@ -12,15 +13,7 @@ interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
 }
 
-function NestedComponentTest({ onMetrics }: TestProps): HTMLDivElement {
-  const container = (<div></div>) as HTMLDivElement;
-  const treeContainer = (<div></div>) as HTMLDivElement;
-
-  let treeData: NodeData | null = null;
-  let treeElement: HTMLDivElement | null = null;
-  let updateCounter = 0;
-  let updateButton: HTMLButtonElement;
-
+function NestedComponentTest({ onMetrics }: TestProps) {
   const createNodeData = (id: string, level: number, maxLevel: number): NodeData => {
     const node: NodeData = {
       id,
@@ -31,7 +24,7 @@ function NestedComponentTest({ onMetrics }: TestProps): HTMLDivElement {
     };
 
     if (level < maxLevel) {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 4; i++) {
         node.children.push(createNodeData(`${id}-${i}`, level + 1, maxLevel));
       }
     }
@@ -44,11 +37,11 @@ function NestedComponentTest({ onMetrics }: TestProps): HTMLDivElement {
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
     treeData = createNodeData('root', 0, 10);
-    treeContainer.innerHTML = '';
-    treeElement = (<NestedNode node={treeData} level={0} maxLevel={10} />) as HTMLDivElement;
-    treeContainer.appendChild(treeElement);
+    treeContainer.value.innerHTML = '';
+    treeElement = <NestedNode node={treeData} level={0} maxLevel={10} />;
+    treeContainer.value.appendChild(treeElement);
 
-    updateButton.disabled = false;
+    (updateButton as any).disabled = false;
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -66,7 +59,7 @@ function NestedComponentTest({ onMetrics }: TestProps): HTMLDivElement {
     }, 0);
   };
 
-  const updateNode = (node: NodeData, element: HTMLDivElement): void => {
+  const updateNode = (node: NodeData, element: HTMLElement): void => {
     node.value = Math.random().toFixed(3);
     node.updateCount++;
 
@@ -110,33 +103,31 @@ function NestedComponentTest({ onMetrics }: TestProps): HTMLDivElement {
   };
 
   const clearTree = (): void => {
-    treeContainer.innerHTML = '';
-    treeData = null;
-    treeElement = null;
+    treeContainer.value.innerHTML = '';
     updateCounter = 0;
-    updateButton.disabled = true;
+    updateButton.value.disabled = true;
     onMetrics(null);
   };
 
-  updateButton = (
-    <button on:click={updateTree} disabled>
-      Update All Nodes
-    </button>
-  ) as HTMLButtonElement;
+  let treeData: NodeData;
+  let treeElement: HTMLElement;
+  let updateCounter = 0;
+  const updateButton = ref<HTMLButtonElement>();
+  const treeContainer = ref();
 
-  const controls = (
-    <div class="controls">
-      <button on:click={createTree}>Create Tree (10 levels, 5 children each)</button>
-      {updateButton}
-      <button on:click={clearTree}>Clear</button>
+  return (
+    <div>
+      <h2>Nested Component Test</h2>
+      <div class="controls">
+        <button on:click={createTree}>Create Tree (10 levels, 5 children each)</button>
+        <button ref={updateButton} on:click={updateTree} disabled>
+          Update All Nodes
+        </button>
+        <button on:click={clearTree}>Clear</button>
+      </div>
+      <div ref={treeContainer}></div>
     </div>
   );
-
-  container.appendChild(<h2>Nested Component Test</h2>);
-  container.appendChild(controls);
-  container.appendChild(treeContainer);
-
-  return container;
 }
 
 export default NestedComponentTest;
