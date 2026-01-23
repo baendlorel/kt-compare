@@ -1,4 +1,4 @@
-import { KTHTMLElement, ref } from 'kt.js';
+import { ref } from 'kt.js';
 
 interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
@@ -11,16 +11,19 @@ export default function LargeListTest({ onMetrics }: TestProps) {
 
   const list = ref();
 
+  let listcontainer = <div ref={list}></div>;
+
   const container = (
     <div>
       <h2>Large List Rendering Test</h2>
       <div class="controls">
         <button on:click={() => generateList(1000)}>1,000 Items</button>
         <button on:click={() => generateList(5000)}>5,000 Items</button>
-        <button on:click={() => generateList(10000)}>10,000 Items</button>
+        <button on:click={() => generateList(1e4)}>10,000 Items</button>
+        <button on:click={() => generateList(1e5)}>100,000 Items</button>
         <button on:click={clearList}>Clear</button>
       </div>
-      <div ref={list}></div>
+      {listcontainer}
     </div>
   );
 
@@ -28,8 +31,8 @@ export default function LargeListTest({ onMetrics }: TestProps) {
     const startTime = performance.now();
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-    list.value.innerHTML = ''; // same speed as list.value.remove();
-    list.value = <div></div>;
+    listcontainer.innerHTML = ''; // same speed as list.value.remove();
+    listcontainer = <div></div>;
     // Generate list items
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
@@ -40,7 +43,7 @@ export default function LargeListTest({ onMetrics }: TestProps) {
         </div>,
       );
     }
-    list.value.appendChild(fragment);
+    listcontainer.appendChild(fragment);
 
     // Measure after render
     setTimeout(() => {

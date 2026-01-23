@@ -5,6 +5,7 @@
       <button @click="generateList(1000)">1,000 Items</button>
       <button @click="generateList(5000)">5,000 Items</button>
       <button @click="generateList(10000)">10,000 Items</button>
+      <button @click="generateList(100000)">10,000 Items</button>
       <button @click="clearList">Clear</button>
     </div>
 
