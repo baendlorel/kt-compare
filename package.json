@@ -9,7 +9,9 @@
   "scripts": {
     "test": "",
     "dev:vue": "vite vue --config vue/vite.config.js",
-    "build:vue": "vite build vue --config vue/vite.config.js"
+    "build:vue": "vite build vue --config vue/vite.config.js",
+    "dev:ktjs": "vite ktjs --config ktjs/vite.config.js",
+    "build:ktjs": "vite build ktjs --config ktjs/vite.config.js"
   },
   "dependencies": {
     "kt.js": "^0.14.6",
