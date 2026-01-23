@@ -4,9 +4,9 @@ interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
 }
 
-function LargeListTest({ onMetrics }: TestProps): HTMLDivElement {
-  const container = (<div></div>) as HTMLDivElement;
-  const listContainer = (<div></div>) as HTMLDivElement;
+export default function LargeListTest({ onMetrics }: TestProps): HTMLDivElement {
+  const container = <div></div>;
+  const listContainer = <div></div>;
 
   const generateList = (count: number): void => {
     const startTime = performance.now();
@@ -63,5 +63,3 @@ function LargeListTest({ onMetrics }: TestProps): HTMLDivElement {
 
   return container;
 }
-
-export default LargeListTest;

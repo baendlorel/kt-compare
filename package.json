@@ -4,10 +4,12 @@
   "description": "Compares kt.js with other frameworks",
   "description_zh": "kt.js和其他框架的对比",
   "license": "ISC",
+  "type": "module",
   "author": "Kasukabe Tsumugi",
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
+    "open": "cd vue/dist && explorer.exe index.html",
     "dev:vue": "vite vue --config vue/vite.config.ts",
     "build:vue": "vite build vue --config vue/vite.config.ts",
     "dev:ktjs": "vite ktjs --config ktjs/vite.config.ts",
@@ -22,6 +24,7 @@
     "@vitejs/plugin-vue": "^5.2.4",
     "typescript": "^5.9.3",
     "vite": "^6.4.1",
+    "vite-plugin-singlefile": "^2.3.0",
     "vue-tsc": "^2.2.12"
   }
 }
