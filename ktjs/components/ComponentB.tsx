@@ -6,7 +6,7 @@ interface Card {
   status: string;
 }
 
-function ComponentB(): HTMLDivElement {
+export default function ComponentB() {
   const icons = ['📊', '📈', '📉', '💰', '🎯', '⚡', '🔥', '⭐'];
 
   const cards: Card[] = Array.from({ length: 200 }, (_, i) => ({
@@ -33,7 +33,5 @@ function ComponentB(): HTMLDivElement {
         ))}
       </div>
     </div>
-  ) as HTMLDivElement;
+  );
 }
-
-export default ComponentB;

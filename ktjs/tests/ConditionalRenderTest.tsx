@@ -1,3 +1,4 @@
+import { createRedrawable } from 'kt.js';
 import ComponentA from '../components/ComponentA';
 import ComponentB from '../components/ComponentB';
 
@@ -5,29 +6,28 @@ interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
 }
 
-function ConditionalRenderTest({ onMetrics }: TestProps): HTMLDivElement {
-  const container = (<div></div>) as HTMLDivElement;
-  const componentContainer = (<div></div>) as HTMLDivElement;
-
+function ConditionalRenderTest({ onMetrics }: TestProps) {
   let showA = true;
-  let isRunning = false;
-  let startButton: HTMLButtonElement;
-  let manualButton: HTMLButtonElement;
 
-  // Initial render
-  componentContainer.appendChild(<ComponentA />);
+  // fixme redrawable比vue慢 1ms
+  const componentContainer = createRedrawable(() => (
+    <div>
+      <div k-if={showA}>
+        <ComponentA />
+      </div>
+
+      <div k-if={!showA}>
+        <ComponentB />
+      </div>
+    </div>
+  ));
 
   const manualToggle = (): void => {
     showA = !showA;
-    componentContainer.innerHTML = '';
-    componentContainer.appendChild(showA ? <ComponentA /> : <ComponentB />);
+    componentContainer.redraw();
   };
 
   const startToggleTest = async (): Promise<void> => {
-    isRunning = true;
-    startButton.disabled = true;
-    manualButton.disabled = true;
-
     const toggleTimes: number[] = [];
     const toggleCount = 100;
 
@@ -35,8 +35,9 @@ function ConditionalRenderTest({ onMetrics }: TestProps): HTMLDivElement {
       const startTime = performance.now();
 
       showA = !showA;
-      componentContainer.innerHTML = '';
-      componentContainer.appendChild(showA ? <ComponentA /> : <ComponentB />);
+      // componentContainer.innerHTML = '';
+      // componentContainer.appendChild(showA ? <ComponentA /> : <ComponentB />);
+      componentContainer.redraw();
 
       // Wait for next frame to ensure render complete
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -44,10 +45,6 @@ function ConditionalRenderTest({ onMetrics }: TestProps): HTMLDivElement {
       const endTime = performance.now();
       toggleTimes.push(endTime - startTime);
     }
-
-    isRunning = false;
-    startButton.disabled = false;
-    manualButton.disabled = false;
 
     const totalTime = toggleTimes.reduce((a, b) => a + b, 0);
     const avgTime = totalTime / toggleCount;
@@ -63,21 +60,16 @@ function ConditionalRenderTest({ onMetrics }: TestProps): HTMLDivElement {
     });
   };
 
-  startButton = (<button on:click={startToggleTest}>Toggle 100 times</button>) as HTMLButtonElement;
-  manualButton = (<button on:click={manualToggle}>Manual Toggle</button>) as HTMLButtonElement;
-
-  const controls = (
-    <div class="controls">
-      {startButton}
-      {manualButton}
+  return (
+    <div>
+      <h2>Conditional Render Test</h2>
+      <div class="controls">
+        <button on:click={startToggleTest}>Toggle 100 times</button>
+        <button on:click={manualToggle}>Manual Toggle</button>
+      </div>
+      {componentContainer}
     </div>
   );
-
-  container.appendChild(<h2>Conditional Render Test</h2>);
-  container.appendChild(controls);
-  container.appendChild(componentContainer);
-
-  return container;
 }
 
 export default ConditionalRenderTest;

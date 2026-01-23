@@ -5,7 +5,7 @@ interface Item {
   timestamp: string;
 }
 
-function ComponentA(): HTMLDivElement {
+export default function ComponentA() {
   const items: Item[] = Array.from({ length: 200 }, (_, i) => ({
     id: i,
     title: `Item ${i}`,
@@ -28,7 +28,5 @@ function ComponentA(): HTMLDivElement {
         ))}
       </div>
     </div>
-  ) as HTMLDivElement;
+  );
 }
-
-export default ComponentA;
