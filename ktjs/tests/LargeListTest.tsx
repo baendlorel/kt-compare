@@ -1,33 +1,46 @@
-import { KTHTMLElement } from 'kt.js';
+import { KTHTMLElement, ref } from 'kt.js';
 
 interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
 }
 
-export default function LargeListTest({ onMetrics }: TestProps): HTMLDivElement {
-  const container = <div></div>;
-  const listContainer = <div></div>;
+export default function LargeListTest({ onMetrics }: TestProps) {
+  const clearList = (): void => {
+    onMetrics(null);
+  };
+
+  const list = ref();
+
+  const container = (
+    <div>
+      <h2>Large List Rendering Test</h2>
+      <div class="controls">
+        <button on:click={() => generateList(1000)}>1,000 Items</button>
+        <button on:click={() => generateList(5000)}>5,000 Items</button>
+        <button on:click={() => generateList(10000)}>10,000 Items</button>
+        <button on:click={clearList}>Clear</button>
+      </div>
+      <div ref={list}></div>
+    </div>
+  );
 
   const generateList = (count: number): void => {
     const startTime = performance.now();
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-    // Clear previous list
-    listContainer.innerHTML = '';
-
+    list.value.remove();
+    list.value = <div></div>;
     // Generate list items
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
-      const item = (
+      fragment.appendChild(
         <div class="list-item">
           <span>Item {i}</span>
           <span>{Math.random().toFixed(2)}</span>
-        </div>
+        </div>,
       );
-      fragment.appendChild(item);
     }
-
-    listContainer.appendChild(fragment);
+    list.value.appendChild(fragment);
 
     // Measure after render
     setTimeout(() => {
@@ -42,24 +55,6 @@ export default function LargeListTest({ onMetrics }: TestProps): HTMLDivElement 
       });
     }, 0);
   };
-
-  const clearList = (): void => {
-    listContainer.innerHTML = '';
-    onMetrics(null);
-  };
-
-  const controls = (
-    <div class="controls">
-      <button on:click={() => generateList(1000)}>1,000 Items</button>
-      <button on:click={() => generateList(5000)}>5,000 Items</button>
-      <button on:click={() => generateList(10000)}>10,000 Items</button>
-      <button on:click={clearList}>Clear</button>
-    </div>
-  );
-
-  container.appendChild(<h2>Large List Rendering Test</h2>);
-  container.appendChild(controls);
-  container.appendChild(listContainer);
 
   return container;
 }
