@@ -28,7 +28,7 @@ export default function LargeListTest({ onMetrics }: TestProps) {
     const startTime = performance.now();
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-    list.value.remove();
+    list.value.innerHTML = ''; // same speed as list.value.remove();
     list.value = <div></div>;
     // Generate list items
     const fragment = document.createDocumentFragment();
