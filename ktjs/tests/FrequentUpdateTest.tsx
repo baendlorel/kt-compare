@@ -1,26 +1,12 @@
+import { ref } from 'kt.js';
+
 interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
 }
 
-function FrequentUpdateTest({ onMetrics }: TestProps): HTMLDivElement {
-  const container = (<div></div>) as HTMLDivElement;
-  const gridContainer = (
-    <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;"></div>
-  ) as HTMLDivElement;
-
-  let isRunning = false;
-  let animationId: number | null = null;
-  let frameCount = 0;
-  let startTime = 0;
-  const frameTimes: number[] = [];
-  const items: HTMLDivElement[] = [];
-  const colors = ['#f44336', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
-
-  let startButton: HTMLButtonElement;
-  let stopButton: HTMLButtonElement;
-
+export default function FrequentUpdateTest({ onMetrics }: TestProps) {
   const initItems = (): void => {
-    gridContainer.innerHTML = '';
+    gridContainer.value.innerHTML = '';
     items.length = 0;
 
     for (let i = 0; i < 100; i++) {
@@ -30,19 +16,17 @@ function FrequentUpdateTest({ onMetrics }: TestProps): HTMLDivElement {
         >
           0
         </div>
-      ) as HTMLDivElement;
+      );
       items.push(itemDiv);
-      gridContainer.appendChild(itemDiv);
     }
+    gridContainer.value.append(...items);
   };
 
   const updateItems = (): void => {
     const frameStart = performance.now();
-
-    // Update all items
+    // Use firstChild.nodeValue for faster text updates
     items.forEach((item) => {
-      const value = Math.floor(Math.random() * 100);
-      item.textContent = value.toString();
+      item.firstChild!.nodeValue = Math.floor(Math.random() * 100).toString();
     });
 
     frameCount++;
@@ -58,12 +42,9 @@ function FrequentUpdateTest({ onMetrics }: TestProps): HTMLDivElement {
 
   const startTest = (): void => {
     initItems();
-    isRunning = true;
     frameCount = 0;
     frameTimes.length = 0;
     startTime = performance.now();
-    startButton.disabled = true;
-    stopButton.disabled = false;
     animationId = requestAnimationFrame(updateItems);
   };
 
@@ -71,9 +52,6 @@ function FrequentUpdateTest({ onMetrics }: TestProps): HTMLDivElement {
     if (animationId) {
       cancelAnimationFrame(animationId);
     }
-    isRunning = false;
-    startButton.disabled = false;
-    stopButton.disabled = true;
 
     const endTime = performance.now();
     const totalTime = endTime - startTime;
@@ -89,26 +67,27 @@ function FrequentUpdateTest({ onMetrics }: TestProps): HTMLDivElement {
       Performance: fps >= 55 ? '✓ Good' : '✗ Poor',
     });
   };
+  const gridContainer = ref();
 
-  startButton = (<button on:click={startTest}>Start Test (1000 frames)</button>) as HTMLButtonElement;
-  stopButton = (
-    <button on:click={stopTest} disabled>
-      Stop
-    </button>
-  ) as HTMLButtonElement;
-
-  const controls = (
-    <div class="controls">
-      {startButton}
-      {stopButton}
+  const container = (
+    <div>
+      <h2>Frequent Update Test</h2>
+      <div class="controls">
+        <button on:click={startTest}>Start Test (1000 frames)</button>
+        <button on:click={stopTest} disabled>
+          Stop
+        </button>
+      </div>
+      <div ref={gridContainer} style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;"></div>
     </div>
   );
 
-  container.appendChild(<h2>Frequent Update Test</h2>);
-  container.appendChild(controls);
-  container.appendChild(gridContainer);
+  let animationId: number | null = null;
+  let frameCount = 0;
+  let startTime = 0;
+  const frameTimes: number[] = [];
+  const items: HTMLElement[] = [];
+  const colors = ['#f44336', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
 
   return container;
 }
-
-export default FrequentUpdateTest;
