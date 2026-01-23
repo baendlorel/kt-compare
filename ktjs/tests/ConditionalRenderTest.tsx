@@ -12,13 +12,8 @@ function ConditionalRenderTest({ onMetrics }: TestProps) {
   // fixme redrawable比vue慢 1ms
   const componentContainer = createRedrawable(() => (
     <div>
-      <div k-if={showA}>
-        <ComponentA />
-      </div>
-
-      <div k-if={!showA}>
-        <ComponentB />
-      </div>
+      <ComponentA k-if={showA} />
+      <ComponentB k-if={!showA} />
     </div>
   ));
 
