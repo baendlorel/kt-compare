@@ -7,7 +7,7 @@
   "author": "Kasukabe Tsumugi",
   "main": "index.js",
   "scripts": {
-    "test": "",
+    "build": "node build.js",
     "dev:vue": "vite vue --config vue/vite.config.js",
     "build:vue": "vite build vue --config vue/vite.config.js",
     "dev:ktjs": "vite ktjs --config ktjs/vite.config.js",
