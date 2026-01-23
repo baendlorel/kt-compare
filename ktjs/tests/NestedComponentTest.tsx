@@ -24,7 +24,7 @@ function NestedComponentTest({ onMetrics }: TestProps) {
     };
 
     if (level < maxLevel) {
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 5; i++) {
         node.children.push(createNodeData(`${id}-${i}`, level + 1, maxLevel));
       }
     }
@@ -36,7 +36,7 @@ function NestedComponentTest({ onMetrics }: TestProps) {
     const startTime = performance.now();
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-    treeData = createNodeData('root', 0, 10);
+    treeData = createNodeData('root', 0, 5);
     treeContainer.value.innerHTML = '';
     treeElement = <NestedNode node={treeData} level={0} maxLevel={10} />;
     treeContainer.value.appendChild(treeElement);

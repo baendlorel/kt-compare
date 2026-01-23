@@ -40,7 +40,7 @@ const createNodeData = (id: string, level: number, maxLevel: number): NodeData =
   };
 
   if (level < maxLevel) {
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
       node.children.push(createNodeData(`${id}-${i}`, level + 1, maxLevel));
     }
   }
@@ -52,7 +52,7 @@ const createTree = (): void => {
   const startTime = performance.now();
   const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-  treeData.value = createNodeData('root', 0, 10);
+  treeData.value = createNodeData('root', 0, 5);
 
   setTimeout(() => {
     const endTime = performance.now();
