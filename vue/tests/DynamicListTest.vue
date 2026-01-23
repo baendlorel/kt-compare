@@ -21,14 +21,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const emit = defineEmits(['metrics']);
-const items = ref([]);
+interface ListItem {
+  id: number;
+  text: string;
+  value: string;
+}
+
+const emit = defineEmits<{
+  metrics: [metrics: Record<string, string | number> | null];
+}>();
+
+const items = ref<ListItem[]>([]);
 let idCounter = 0;
 
-const initList = () => {
+const initList = (): void => {
   const startTime = performance.now();
 
   items.value = Array.from({ length: 1000 }, (_, i) => ({
@@ -48,7 +57,7 @@ const initList = () => {
   }, 0);
 };
 
-const insertAtStart = () => {
+const insertAtStart = (): void => {
   const startTime = performance.now();
 
   items.value.unshift({
@@ -67,7 +76,7 @@ const insertAtStart = () => {
   }, 0);
 };
 
-const insertAtMiddle = () => {
+const insertAtMiddle = (): void => {
   const startTime = performance.now();
   const middleIndex = Math.floor(items.value.length / 2);
 
@@ -87,7 +96,7 @@ const insertAtMiddle = () => {
   }, 0);
 };
 
-const insertAtEnd = () => {
+const insertAtEnd = (): void => {
   const startTime = performance.now();
 
   items.value.push({
@@ -106,7 +115,7 @@ const insertAtEnd = () => {
   }, 0);
 };
 
-const deleteFromStart = () => {
+const deleteFromStart = (): void => {
   const startTime = performance.now();
   items.value.shift();
 
@@ -120,7 +129,7 @@ const deleteFromStart = () => {
   }, 0);
 };
 
-const deleteFromMiddle = () => {
+const deleteFromMiddle = (): void => {
   const startTime = performance.now();
   const middleIndex = Math.floor(items.value.length / 2);
   items.value.splice(middleIndex, 1);
@@ -135,7 +144,7 @@ const deleteFromMiddle = () => {
   }, 0);
 };
 
-const deleteFromEnd = () => {
+const deleteFromEnd = (): void => {
   const startTime = performance.now();
   items.value.pop();
 
@@ -149,7 +158,7 @@ const deleteFromEnd = () => {
   }, 0);
 };
 
-const batchUpdate = () => {
+const batchUpdate = (): void => {
   const startTime = performance.now();
 
   // Update 100 random items

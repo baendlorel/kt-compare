@@ -1,46 +1,49 @@
 # Vue vs KT.js Performance Comparison
 
-Performance benchmark suite comparing Vue 3 and KT.js frameworks.
+Performance benchmark suite comparing Vue 3 and KT.js frameworks (TypeScript).
 
 ## 📁 Project Structure
 
 ```
 kt-compare/
 ├── 性能指标说明.md          # Performance metrics documentation (Chinese)
-├── vue/                     # Vue 3 implementation
+├── tsconfig.json            # Root TypeScript config
+├── vue/                     # Vue 3 implementation (TypeScript)
 │   ├── index.html
 │   ├── main.js
 │   ├── App.vue
+│   ├── tsconfig.json
 │   ├── vite.config.js
 │   ├── components/
-│   │   ├── ComponentA.vue
-│   │   ├── ComponentB.vue
-│   │   └── NestedNode.vue
+│   │   ├── ComponentA.vue  (lang="ts")
+│   │   ├── ComponentB.vue  (lang="ts")
+│   │   └── NestedNode.vue  (lang="ts")
 │   └── tests/
-│       ├── LargeListTest.vue
-│       ├── FrequentUpdateTest.vue
-│       ├── NestedComponentTest.vue
-│       ├── ConditionalRenderTest.vue
-│       ├── EventHandlingTest.vue
-│       ├── DynamicListTest.vue
-│       └── InitializationTest.vue
-└── ktjs/                    # KT.js implementation
+│       ├── LargeListTest.vue  (lang="ts")
+│       ├── FrequentUpdateTest.vue  (lang="ts")
+│       ├── NestedComponentTest.vue  (lang="ts")
+│       ├── ConditionalRenderTest.vue  (lang="ts")
+│       ├── EventHandlingTest.vue  (lang="ts")
+│       ├── DynamicListTest.vue  (lang="ts")
+│       └── InitializationTest.vue  (lang="ts")
+└── ktjs/                    # KT.js implementation (TypeScript)
     ├── index.html
-    ├── main.jsx
-    ├── App.jsx
+    ├── main.tsx
+    ├── App.tsx
+    ├── tsconfig.json
     ├── vite.config.js
     ├── components/
-    │   ├── ComponentA.jsx
-    │   ├── ComponentB.jsx
-    │   └── NestedNode.jsx
+    │   ├── ComponentA.tsx
+    │   ├── ComponentB.tsx
+    │   └── NestedNode.tsx
     └── tests/
-        ├── LargeListTest.jsx
-        ├── FrequentUpdateTest.jsx
-        ├── NestedComponentTest.jsx
-        ├── ConditionalRenderTest.jsx
-        ├── EventHandlingTest.jsx
-        ├── DynamicListTest.jsx
-        └── InitializationTest.jsx
+        ├── LargeListTest.tsx
+        ├── FrequentUpdateTest.tsx
+        ├── NestedComponentTest.tsx
+        ├── ConditionalRenderTest.tsx
+        ├── EventHandlingTest.tsx
+        ├── DynamicListTest.tsx
+        └── InitializationTest.tsx
 ```
 
 ## 🚀 Quick Start

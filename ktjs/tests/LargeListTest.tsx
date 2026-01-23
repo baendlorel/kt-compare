@@ -1,10 +1,16 @@
-function LargeListTest({ onMetrics }) {
+import { KTHTMLElement } from 'kt.js';
+
+interface TestProps {
+  onMetrics: (metrics: Record<string, string | number> | null) => void;
+}
+
+function LargeListTest({ onMetrics }: TestProps): HTMLDivElement {
   const container = (<div></div>) as HTMLDivElement;
   const listContainer = (<div></div>) as HTMLDivElement;
 
-  const generateList = (count) => {
+  const generateList = (count: number): void => {
     const startTime = performance.now();
-    const startMemory = performance.memory?.usedJSHeapSize || 0;
+    const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
     // Clear previous list
     listContainer.innerHTML = '';
@@ -26,18 +32,18 @@ function LargeListTest({ onMetrics }) {
     // Measure after render
     setTimeout(() => {
       const endTime = performance.now();
-      const endMemory = performance.memory?.usedJSHeapSize || 0;
+      const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
       onMetrics({
         'Render Time': `${(endTime - startTime).toFixed(2)} ms`,
         'Items Count': count,
         'Memory Delta': `${((endMemory - startMemory) / 1024 / 1024).toFixed(2)} MB`,
-        'Avg per Item': `${((endTime - startTime) / count).toFixed(4)} ms`
+        'Avg per Item': `${((endTime - startTime) / count).toFixed(4)} ms`,
       });
     }, 0);
   };
 
-  const clearList = () => {
+  const clearList = (): void => {
     listContainer.innerHTML = '';
     onMetrics(null);
   };

@@ -18,13 +18,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
+
+interface Card {
+  id: number;
+  icon: string;
+  name: string;
+  value: string;
+  status: string;
+}
 
 const icons = ['📊', '📈', '📉', '💰', '🎯', '⚡', '🔥', '⭐'];
 
 // Generate 200 cards to make component heavy
-const cards = ref(
+const cards = ref<Card[]>(
   Array.from({ length: 200 }, (_, i) => ({
     id: i,
     icon: icons[i % icons.length],

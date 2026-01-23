@@ -8,19 +8,18 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  node: {
-    type: Object,
-    required: true,
-  },
-  level: {
-    type: Number,
-    required: true,
-  },
-  maxLevel: {
-    type: Number,
-    required: true,
-  },
-});
+<script setup lang="ts">
+interface NodeData {
+  id: string;
+  level: number;
+  value: string;
+  updateCount: number;
+  children: NodeData[];
+}
+
+defineProps<{
+  node: NodeData;
+  level: number;
+  maxLevel: number;
+}>();
 </script>

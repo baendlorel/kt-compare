@@ -24,20 +24,29 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const emit = defineEmits(['metrics']);
-const items = ref([]);
-const isRunning = ref(false);
-let animationId = null;
+interface Item {
+  id: number;
+  value: number;
+  color: string;
+}
+
+const emit = defineEmits<{
+  metrics: [metrics: Record<string, string | number> | null];
+}>();
+
+const items = ref<Item[]>([]);
+const isRunning = ref<boolean>(false);
+let animationId: number | null = null;
 let frameCount = 0;
 let startTime = 0;
-const frameTimes = [];
+const frameTimes: number[] = [];
 
 const colors = ['#f44336', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
 
-const initItems = () => {
+const initItems = (): void => {
   items.value = Array.from({ length: 100 }, (_, i) => ({
     id: i,
     value: 0,
@@ -45,7 +54,7 @@ const initItems = () => {
   }));
 };
 
-const updateItems = () => {
+const updateItems = (): void => {
   const frameStart = performance.now();
 
   // Update all items
@@ -64,7 +73,7 @@ const updateItems = () => {
   }
 };
 
-const startTest = () => {
+const startTest = (): void => {
   initItems();
   isRunning.value = true;
   frameCount = 0;
@@ -73,7 +82,7 @@ const startTest = () => {
   animationId = requestAnimationFrame(updateItems);
 };
 
-const stopTest = () => {
+const stopTest = (): void => {
   if (animationId) {
     cancelAnimationFrame(animationId);
   }

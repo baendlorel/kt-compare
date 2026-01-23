@@ -7,8 +7,14 @@ import EventHandlingTest from './tests/EventHandlingTest';
 import DynamicListTest from './tests/DynamicListTest';
 import InitializationTest from './tests/InitializationTest';
 
-function App() {
-  const tests = [
+interface Test {
+  id: string;
+  name: string;
+  component: (props: { onMetrics: (metrics: Record<string, string | number> | null) => void }) => HTMLDivElement;
+}
+
+function App(): HTMLDivElement {
+  const tests: Test[] = [
     { id: 'large-list', name: 'Large List', component: LargeListTest },
     { id: 'frequent-update', name: 'Frequent Update', component: FrequentUpdateTest },
     { id: 'nested-component', name: 'Nested Component', component: NestedComponentTest },
@@ -19,14 +25,14 @@ function App() {
   ];
 
   let currentTest = 'large-list';
-  let currentMetrics = null;
+  let currentMetrics: Record<string, string | number> | null = null;
 
   const ktVersion = '0.14.6'; // KT.js version
 
-  const metricsDiv = (<div class="metrics" style="display: none;"></div>) as KTHTMLElement;
+  const metricsDiv = (<div class="metrics" style="display: none;"></div>) as HTMLDivElement;
   const testArea = (<div class="test-area"></div>) as HTMLDivElement;
 
-  const updateMetrics = (metrics) => {
+  const updateMetrics = (metrics: Record<string, string | number> | null): void => {
     if (!metrics) {
       metricsDiv.style.display = 'none';
       return;
@@ -35,7 +41,7 @@ function App() {
     currentMetrics = metrics;
     metricsDiv.style.display = 'block';
     metricsDiv.innerHTML = '';
-    
+
     const frameworkItem = document.createElement('div');
     frameworkItem.className = 'metrics-item';
     frameworkItem.textContent = `Framework: KT.js ${ktVersion}`;
@@ -49,20 +55,20 @@ function App() {
     });
   };
 
-  const renderTest = (testId) => {
+  const renderTest = (testId: string): void => {
     currentTest = testId;
     currentMetrics = null;
     metricsDiv.style.display = 'none';
     testArea.innerHTML = '';
 
-    const test = tests.find(t => t.id === testId);
+    const test = tests.find((t) => t.id === testId);
     if (test) {
-      const testComponent = <test.component onMetrics={updateMetrics} />;
+      const testComponent = test.component({ onMetrics: updateMetrics });
       testArea.appendChild(testComponent);
     }
 
     // Update active button state
-    testButtons.forEach(btn => {
+    testButtons.forEach((btn) => {
       if (btn.dataset.testId === testId) {
         btn.classList.add('active');
       } else {
@@ -71,16 +77,16 @@ function App() {
     });
   };
 
-  const testButtons = tests.map(test => {
+  const testButtons = tests.map((test) => {
     const btn = (
-      <button 
+      <button
         data-test-id={test.id}
         class={test.id === currentTest ? 'active' : ''}
         on:click={() => renderTest(test.id)}
       >
         {test.name}
       </button>
-    );
+    ) as HTMLButtonElement;
     return btn;
   });
 
@@ -90,15 +96,13 @@ function App() {
   return (
     <div class="container">
       <h1>KT.js Performance Test Suite</h1>
-      
-      <div class="test-selector">
-        {...testButtons}
-      </div>
+
+      <div class="test-selector">{...testButtons}</div>
 
       {metricsDiv}
       {testArea}
     </div>
-  );
+  ) as HTMLDivElement;
 }
 
 export default App;

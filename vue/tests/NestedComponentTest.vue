@@ -11,15 +11,26 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import NestedNode from '../components/NestedNode.vue';
 
-const emit = defineEmits(['metrics']);
-const treeData = ref(null);
+interface NodeData {
+  id: string;
+  level: number;
+  value: string;
+  updateCount: number;
+  children: NodeData[];
+}
+
+const emit = defineEmits<{
+  metrics: [metrics: Record<string, string | number> | null];
+}>();
+
+const treeData = ref<NodeData | null>(null);
 let updateCounter = 0;
 
-const createNodeData = (id, level, maxLevel) => {
+const createNodeData = (id: string, level: number, maxLevel: number): NodeData => {
   const node = {
     id,
     level,
@@ -37,15 +48,15 @@ const createNodeData = (id, level, maxLevel) => {
   return node;
 };
 
-const createTree = () => {
+const createTree = (): void => {
   const startTime = performance.now();
-  const startMemory = performance.memory?.usedJSHeapSize || 0;
+  const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
   treeData.value = createNodeData('root', 0, 10);
 
   setTimeout(() => {
     const endTime = performance.now();
-    const endMemory = performance.memory?.usedJSHeapSize || 0;
+    const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
     // Calculate total nodes (5^0 + 5^1 + ... + 5^10)
     const totalNodes = (Math.pow(5, 11) - 1) / 4;
@@ -59,13 +70,13 @@ const createTree = () => {
   }, 0);
 };
 
-const updateNode = (node) => {
+const updateNode = (node: NodeData): void => {
   node.value = Math.random().toFixed(3);
   node.updateCount++;
   node.children.forEach((child) => updateNode(child));
 };
 
-const updateTree = () => {
+const updateTree = (): void => {
   if (!treeData.value) return;
 
   const startTime = performance.now();
@@ -86,7 +97,7 @@ const updateTree = () => {
   }, 0);
 };
 
-const clearTree = () => {
+const clearTree = (): void => {
   treeData.value = null;
   updateCounter = 0;
   emit('metrics', null);

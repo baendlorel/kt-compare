@@ -1,5 +1,12 @@
-function ComponentA() {
-  const items = Array.from({ length: 200 }, (_, i) => ({
+interface Item {
+  id: number;
+  title: string;
+  description: string;
+  timestamp: string;
+}
+
+function ComponentA(): HTMLDivElement {
+  const items: Item[] = Array.from({ length: 200 }, (_, i) => ({
     id: i,
     title: `Item ${i}`,
     description: `This is a description for item ${i}`,
@@ -21,7 +28,7 @@ function ComponentA() {
         ))}
       </div>
     </div>
-  );
+  ) as HTMLDivElement;
 }
 
 export default ComponentA;

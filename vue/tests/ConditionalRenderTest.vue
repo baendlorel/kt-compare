@@ -11,22 +11,25 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import ComponentA from '../components/ComponentA.vue';
 import ComponentB from '../components/ComponentB.vue';
 
-const emit = defineEmits(['metrics']);
-const showA = ref(true);
-const isRunning = ref(false);
+const emit = defineEmits<{
+  metrics: [metrics: Record<string, string | number> | null];
+}>();
 
-const manualToggle = () => {
+const showA = ref<boolean>(true);
+const isRunning = ref<boolean>(false);
+
+const manualToggle = (): void => {
   showA.value = !showA.value;
 };
 
-const startToggleTest = async () => {
+const startToggleTest = async (): Promise<void> => {
   isRunning.value = true;
-  const toggleTimes = [];
+  const toggleTimes: number[] = [];
   const toggleCount = 100;
 
   for (let i = 0; i < toggleCount; i++) {

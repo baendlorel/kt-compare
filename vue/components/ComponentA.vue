@@ -17,11 +17,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
+interface Item {
+  id: number;
+  title: string;
+  description: string;
+  timestamp: string;
+}
+
 // Generate 200 items to make component heavy
-const items = ref(
+const items = ref<Item[]>(
   Array.from({ length: 200 }, (_, i) => ({
     id: i,
     title: `Item ${i}`,

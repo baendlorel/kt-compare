@@ -1,41 +1,45 @@
 import ComponentA from '../components/ComponentA';
 import ComponentB from '../components/ComponentB';
 
-function ConditionalRenderTest({ onMetrics }) {
+interface TestProps {
+  onMetrics: (metrics: Record<string, string | number> | null) => void;
+}
+
+function ConditionalRenderTest({ onMetrics }: TestProps): HTMLDivElement {
   const container = (<div></div>) as HTMLDivElement;
   const componentContainer = (<div></div>) as HTMLDivElement;
 
   let showA = true;
   let isRunning = false;
-  let startButton;
-  let manualButton;
+  let startButton: HTMLButtonElement;
+  let manualButton: HTMLButtonElement;
 
   // Initial render
   componentContainer.appendChild(<ComponentA />);
 
-  const manualToggle = () => {
+  const manualToggle = (): void => {
     showA = !showA;
     componentContainer.innerHTML = '';
     componentContainer.appendChild(showA ? <ComponentA /> : <ComponentB />);
   };
 
-  const startToggleTest = async () => {
+  const startToggleTest = async (): Promise<void> => {
     isRunning = true;
     startButton.disabled = true;
     manualButton.disabled = true;
 
-    const toggleTimes = [];
+    const toggleTimes: number[] = [];
     const toggleCount = 100;
 
     for (let i = 0; i < toggleCount; i++) {
       const startTime = performance.now();
-      
+
       showA = !showA;
       componentContainer.innerHTML = '';
       componentContainer.appendChild(showA ? <ComponentA /> : <ComponentB />);
 
       // Wait for next frame to ensure render complete
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       const endTime = performance.now();
       toggleTimes.push(endTime - startTime);
@@ -55,12 +59,12 @@ function ConditionalRenderTest({ onMetrics }) {
       'Total Time': `${totalTime.toFixed(2)} ms`,
       'Avg Toggle Time': `${avgTime.toFixed(2)} ms`,
       'Min Time': `${minTime.toFixed(2)} ms`,
-      'Max Time': `${maxTime.toFixed(2)} ms`
+      'Max Time': `${maxTime.toFixed(2)} ms`,
     });
   };
 
-  startButton = <button on:click={startToggleTest}>Toggle 100 times</button>;
-  manualButton = <button on:click={manualToggle}>Manual Toggle</button>;
+  startButton = (<button on:click={startToggleTest}>Toggle 100 times</button>) as HTMLButtonElement;
+  manualButton = (<button on:click={manualToggle}>Manual Toggle</button>) as HTMLButtonElement;
 
   const controls = (
     <div class="controls">

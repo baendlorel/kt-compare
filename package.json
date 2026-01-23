@@ -8,17 +8,20 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "dev:vue": "vite vue --config vue/vite.config.js",
-    "build:vue": "vite build vue --config vue/vite.config.js",
-    "dev:ktjs": "vite ktjs --config ktjs/vite.config.js",
-    "build:ktjs": "vite build ktjs --config ktjs/vite.config.js"
+    "dev:vue": "vite vue --config vue/vite.config.ts",
+    "build:vue": "vite build vue --config vue/vite.config.ts",
+    "dev:ktjs": "vite ktjs --config ktjs/vite.config.ts",
+    "build:ktjs": "vite build ktjs --config ktjs/vite.config.ts"
   },
   "dependencies": {
     "kt.js": "^0.14.6",
     "vue": "^3.5.27"
   },
   "devDependencies": {
+    "@types/node": "^25.0.10",
     "@vitejs/plugin-vue": "^5.2.4",
-    "vite": "^6.4.1"
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vue-tsc": "^2.2.12"
   }
 }

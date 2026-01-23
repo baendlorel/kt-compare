@@ -1,7 +1,15 @@
-function ComponentB() {
+interface Card {
+  id: number;
+  icon: string;
+  name: string;
+  value: string;
+  status: string;
+}
+
+function ComponentB(): HTMLDivElement {
   const icons = ['📊', '📈', '📉', '💰', '🎯', '⚡', '🔥', '⭐'];
 
-  const cards = Array.from({ length: 200 }, (_, i) => ({
+  const cards: Card[] = Array.from({ length: 200 }, (_, i) => ({
     id: i,
     icon: icons[i % icons.length],
     name: `Card ${i}`,
@@ -25,7 +33,7 @@ function ComponentB() {
         ))}
       </div>
     </div>
-  );
+  ) as HTMLDivElement;
 }
 
 export default ComponentB;

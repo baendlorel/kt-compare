@@ -19,16 +19,24 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const emit = defineEmits(['metrics']);
-const buttons = ref([]);
-const clickCount = ref(0);
+interface Button {
+  id: number;
+  label: string;
+}
 
-const createButtons = (count) => {
+const emit = defineEmits<{
+  metrics: [metrics: Record<string, string | number> | null];
+}>();
+
+const buttons = ref<Button[]>([]);
+const clickCount = ref<number>(0);
+
+const createButtons = (count: number): void => {
   const startTime = performance.now();
-  const startMemory = performance.memory?.usedJSHeapSize || 0;
+  const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
   buttons.value = Array.from({ length: count }, (_, i) => ({
     id: i,
@@ -39,7 +47,7 @@ const createButtons = (count) => {
 
   setTimeout(() => {
     const endTime = performance.now();
-    const endMemory = performance.memory?.usedJSHeapSize || 0;
+    const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
     emit('metrics', {
       'Button Count': count,
@@ -50,7 +58,7 @@ const createButtons = (count) => {
   }, 0);
 };
 
-const handleClick = (id) => {
+const handleClick = (id: number): void => {
   const startTime = performance.now();
   clickCount.value++;
   const endTime = performance.now();
@@ -63,7 +71,7 @@ const handleClick = (id) => {
   });
 };
 
-const clearButtons = () => {
+const clearButtons = (): void => {
   buttons.value = [];
   clickCount.value = 0;
   emit('metrics', null);

@@ -1,25 +1,33 @@
-function FrequentUpdateTest({ onMetrics }) {
+interface TestProps {
+  onMetrics: (metrics: Record<string, string | number> | null) => void;
+}
+
+function FrequentUpdateTest({ onMetrics }: TestProps): HTMLDivElement {
   const container = (<div></div>) as HTMLDivElement;
-  const gridContainer = (<div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;"></div>) as HTMLDivElement;
+  const gridContainer = (
+    <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px;"></div>
+  ) as HTMLDivElement;
 
   let isRunning = false;
-  let animationId = null;
+  let animationId: number | null = null;
   let frameCount = 0;
   let startTime = 0;
-  const frameTimes = [];
-  const items = [];
+  const frameTimes: number[] = [];
+  const items: HTMLDivElement[] = [];
   const colors = ['#f44336', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
 
-  let startButton;
-  let stopButton;
+  let startButton: HTMLButtonElement;
+  let stopButton: HTMLButtonElement;
 
-  const initItems = () => {
+  const initItems = (): void => {
     gridContainer.innerHTML = '';
     items.length = 0;
 
     for (let i = 0; i < 100; i++) {
       const itemDiv = (
-        <div style={`padding: 10px; background: ${colors[i % colors.length]}; color: white; border-radius: 4px; text-align: center;`}>
+        <div
+          style={`padding: 10px; background: ${colors[i % colors.length]}; color: white; border-radius: 4px; text-align: center;`}
+        >
           0
         </div>
       ) as HTMLDivElement;
@@ -28,11 +36,11 @@ function FrequentUpdateTest({ onMetrics }) {
     }
   };
 
-  const updateItems = () => {
+  const updateItems = (): void => {
     const frameStart = performance.now();
 
     // Update all items
-    items.forEach(item => {
+    items.forEach((item) => {
       const value = Math.floor(Math.random() * 100);
       item.textContent = value.toString();
     });
@@ -48,7 +56,7 @@ function FrequentUpdateTest({ onMetrics }) {
     }
   };
 
-  const startTest = () => {
+  const startTest = (): void => {
     initItems();
     isRunning = true;
     frameCount = 0;
@@ -59,7 +67,7 @@ function FrequentUpdateTest({ onMetrics }) {
     animationId = requestAnimationFrame(updateItems);
   };
 
-  const stopTest = () => {
+  const stopTest = (): void => {
     if (animationId) {
       cancelAnimationFrame(animationId);
     }
@@ -78,12 +86,16 @@ function FrequentUpdateTest({ onMetrics }) {
       'Avg Frame Time': `${avgFrameTime.toFixed(2)} ms`,
       'Avg FPS': `${fps.toFixed(2)}`,
       'Target FPS': '60',
-      'Performance': fps >= 55 ? '✓ Good' : '✗ Poor'
+      Performance: fps >= 55 ? '✓ Good' : '✗ Poor',
     });
   };
 
-  startButton = <button on:click={startTest}>Start Test (1000 frames)</button>;
-  stopButton = <button on:click={stopTest} disabled>Stop</button>;
+  startButton = (<button on:click={startTest}>Start Test (1000 frames)</button>) as HTMLButtonElement;
+  stopButton = (
+    <button on:click={stopTest} disabled>
+      Stop
+    </button>
+  ) as HTMLButtonElement;
 
   const controls = (
     <div class="controls">

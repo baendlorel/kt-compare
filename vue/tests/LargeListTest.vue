@@ -17,18 +17,27 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const emit = defineEmits(['metrics']);
-const items = ref([]);
+interface ListItem {
+  id: number;
+  text: string;
+  value: string;
+}
 
-const generateList = (count) => {
+const emit = defineEmits<{
+  metrics: [metrics: Record<string, string | number> | null];
+}>();
+
+const items = ref<ListItem[]>([]);
+
+const generateList = (count: number): void => {
   const startTime = performance.now();
-  const startMemory = performance.memory?.usedJSHeapSize || 0;
+  const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
   // Generate data
-  const newItems = [];
+  const newItems: ListItem[] = [];
   for (let i = 0; i < count; i++) {
     newItems.push({
       id: i,
@@ -43,7 +52,7 @@ const generateList = (count) => {
   // Measure after next tick
   setTimeout(() => {
     const endTime = performance.now();
-    const endMemory = performance.memory?.usedJSHeapSize || 0;
+    const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
     emit('metrics', {
       'Render Time': `${(endTime - startTime).toFixed(2)} ms`,
@@ -54,7 +63,7 @@ const generateList = (count) => {
   }, 0);
 };
 
-const clearList = () => {
+const clearList = (): void => {
   items.value = [];
   emit('metrics', null);
 };

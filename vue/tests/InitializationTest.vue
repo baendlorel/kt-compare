@@ -61,44 +61,64 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const emit = defineEmits(['metrics']);
-const showApp = ref(false);
+interface Card {
+  id: number;
+  title: string;
+  description: string;
+  action: string;
+}
 
-const cards = [
+interface RecentItem {
+  id: number;
+  text: string;
+}
+
+interface Stat {
+  label: string;
+  value: string;
+}
+
+const emit = defineEmits<{
+  metrics: [metrics: Record<string, string | number> | null];
+}>();
+
+const showApp = ref<boolean>(false);
+
+const cards: Card[] = [
   { id: 1, title: 'Dashboard', description: 'View your dashboard', action: 'Open' },
   { id: 2, title: 'Analytics', description: 'View analytics', action: 'View' },
   { id: 3, title: 'Settings', description: 'Manage settings', action: 'Configure' },
 ];
 
-const recentItems = Array.from({ length: 20 }, (_, i) => ({
+const recentItems: RecentItem[] = Array.from({ length: 20 }, (_, i) => ({
   id: i,
   text: `Recent item ${i + 1} - ${new Date().toLocaleString()}`,
 }));
 
-const stats = [
+const stats: Stat[] = [
   { label: 'Users', value: '1,234' },
   { label: 'Revenue', value: '$45,678' },
   { label: 'Orders', value: '890' },
   { label: 'Products', value: '456' },
 ];
 
-const measureInit = () => {
+const measureInit = (): void => {
   // Clear first
   showApp.value = false;
 
   setTimeout(() => {
     const startTime = performance.now();
-    const startMemory = performance.memory?.usedJSHeapSize || 0;
+    const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
     // Trigger render
     showApp.value = true;
 
     setTimeout(() => {
       const endTime = performance.now();
-      const endMemory = performance.memory?.usedJSHeapSize || 0;
+      const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
       emit('metrics', {
         'Initialization Time': `${(endTime - startTime).toFixed(2)} ms`,
@@ -110,7 +130,7 @@ const measureInit = () => {
   }, 100);
 };
 
-const clearApp = () => {
+const clearApp = (): void => {
   showApp.value = false;
   emit('metrics', null);
 };

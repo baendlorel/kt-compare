@@ -1,12 +1,25 @@
-function EventHandlingTest({ onMetrics }) {
+interface TestProps {
+  onMetrics: (metrics: Record<string, string | number> | null) => void;
+}
+
+interface ButtonData {
+  id: number;
+  label: string;
+}
+
+function EventHandlingTest({ onMetrics }: TestProps): HTMLDivElement {
   const container = (<div></div>) as HTMLDivElement;
-  const buttonContainer = (<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 5px;"></div>) as HTMLDivElement;
-  const clickCountDiv = (<div style="display: none; margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 4px;"></div>) as HTMLDivElement;
+  const buttonContainer = (
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 5px;"></div>
+  ) as HTMLDivElement;
+  const clickCountDiv = (
+    <div style="display: none; margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 4px;"></div>
+  ) as HTMLDivElement;
 
   let clickCount = 0;
-  let buttons = [];
+  let buttons: HTMLButtonElement[] = [];
 
-  const handleClick = (id) => {
+  const handleClick = (id: number): void => {
     const startTime = performance.now();
     clickCount++;
     clickCountDiv.textContent = `Total Clicks: ${clickCount}`;
@@ -17,13 +30,13 @@ function EventHandlingTest({ onMetrics }) {
       'Button Count': buttons.length,
       'Last Click': `Button ${id}`,
       'Response Time': `${(endTime - startTime).toFixed(4)} ms`,
-      'Total Clicks': clickCount
+      'Total Clicks': clickCount,
     });
   };
 
-  const createButtons = (count) => {
+  const createButtons = (count: number): void => {
     const startTime = performance.now();
-    const startMemory = performance.memory?.usedJSHeapSize || 0;
+    const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
     buttonContainer.innerHTML = '';
     buttons = [];
@@ -36,7 +49,7 @@ function EventHandlingTest({ onMetrics }) {
         <button on:click={() => handleClick(i)} style="padding: 8px; font-size: 12px;">
           Btn {i}
         </button>
-      );
+      ) as HTMLButtonElement;
       buttons.push(btn);
       fragment.appendChild(btn);
     }
@@ -45,18 +58,18 @@ function EventHandlingTest({ onMetrics }) {
 
     setTimeout(() => {
       const endTime = performance.now();
-      const endMemory = performance.memory?.usedJSHeapSize || 0;
+      const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
       onMetrics({
         'Button Count': count,
         'Binding Time': `${(endTime - startTime).toFixed(2)} ms`,
         'Memory Delta': `${((endMemory - startMemory) / 1024 / 1024).toFixed(2)} MB`,
-        'Avg per Button': `${((endTime - startTime) / count).toFixed(4)} ms`
+        'Avg per Button': `${((endTime - startTime) / count).toFixed(4)} ms`,
       });
     }, 0);
   };
 
-  const clearButtons = () => {
+  const clearButtons = (): void => {
     buttonContainer.innerHTML = '';
     buttons = [];
     clickCount = 0;
