@@ -12,7 +12,13 @@
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 5px">
-      <button v-for="btn in buttons" :key="btn.id" @click="handleClick(btn.id)" style="padding: 8px; font-size: 12px">
+      <button
+        aaa
+        v-for="btn in buttons"
+        :key="btn.id"
+        @click="handleClick(btn.id)"
+        style="padding: 8px; font-size: 12px"
+      >
         {{ btn.label }}
       </button>
     </div>
@@ -20,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 
 interface Button {
   id: number;
@@ -34,28 +40,31 @@ const emit = defineEmits<{
 const buttons = ref<Button[]>([]);
 const clickCount = ref<number>(0);
 
-const createButtons = (count: number): void => {
+const createButtons = async (count: number): Promise<void> => {
   const startTime = performance.now();
   const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
   buttons.value = Array.from({ length: count }, (_, i) => ({
     id: i,
-    label: `Btn ${i}`,
+    label: `Btn ${Math.random()}`,
   }));
 
   clickCount.value = 0;
+  console.log(document.querySelector('button[aaa]'));
 
-  setTimeout(() => {
-    const endTime = performance.now();
-    const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
+  // Wait for DOM updates to complete
+  await nextTick();
+  console.log(document.querySelector('button[aaa]'));
 
-    emit('metrics', {
-      'Button Count': count,
-      'Binding Time': `${(endTime - startTime).toFixed(2)} ms`,
-      'Memory Delta': `${((endMemory - startMemory) / 1024 / 1024).toFixed(2)} MB`,
-      'Avg per Button': `${((endTime - startTime) / count).toFixed(4)} ms`,
-    });
-  }, 0);
+  const endTime = performance.now();
+  const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
+
+  emit('metrics', {
+    'Button Count': count,
+    'Binding Time': `${(endTime - startTime).toFixed(2)} ms`,
+    'Memory Delta': `${((endMemory - startMemory) / 1024 / 1024).toFixed(2)} MB`,
+    'Avg per Button': `${((endTime - startTime) / count).toFixed(4)} ms`,
+  });
 };
 
 const handleClick = (id: number): void => {

@@ -1,4 +1,4 @@
-import { KTHTMLElement, ref } from 'kt.js';
+import { ref } from 'kt.js';
 
 interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
@@ -13,7 +13,6 @@ export default function EventHandlingTest({ onMetrics }: TestProps) {
     const endTime = performance.now();
 
     onMetrics({
-      'Button Count': buttons.length,
       'Last Click': `Button ${id}`,
       'Response Time': `${(endTime - startTime).toFixed(4)} ms`,
       'Total Clicks': clickCount,
@@ -24,23 +23,32 @@ export default function EventHandlingTest({ onMetrics }: TestProps) {
     const startTime = performance.now();
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-    btns.value.innerHTML = '';
-    buttons = [];
-    clickCount = 0;
-    clickCountDiv.value.style.display = 'none';
+    const children = btns.value.children;
+    btns.value.style.display = 'none';
+    if (count === children.length) {
+      for (let i = 0; i < children.length; i++) {
+        const b = children[i];
+        b.firstChild!.nodeValue = `Btn ${Math.random()}`;
+        b.addEventListener('click', () => handleClick(i));
+      }
+    } else {
+      btns.value.innerHTML = '';
+      clickCount = 0;
+      clickCountDiv.value.style.display = 'none';
 
-    const fragment = document.createDocumentFragment();
-    for (let i = 0; i < count; i++) {
-      const btn = (
-        <button on:click={() => handleClick(i)} style="padding: 8px; font-size: 12px;">
-          Btn {i}
-        </button>
-      );
-      buttons.push(btn);
-      fragment.appendChild(btn);
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < count; i++) {
+        const btn = (
+          <button on:click={() => handleClick(i)} style="padding: 8px; font-size: 12px;">
+            Btn {Math.random()}
+          </button>
+        );
+        fragment.appendChild(btn);
+      }
+
+      btns.value.appendChild(fragment);
     }
-
-    btns.value.appendChild(fragment);
+    btns.value.style.display = '';
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -57,14 +65,12 @@ export default function EventHandlingTest({ onMetrics }: TestProps) {
 
   const clearButtons = (): void => {
     btns.value.innerHTML = '';
-    buttons = [];
     clickCount = 0;
     clickCountDiv.value.style.display = 'none';
     onMetrics(null);
   };
 
   let clickCount = 0;
-  let buttons: KTHTMLElement[] = [];
   const btns = ref();
   const clickCountDiv = ref();
   const container = (
