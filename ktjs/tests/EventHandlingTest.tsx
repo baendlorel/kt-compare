@@ -27,7 +27,7 @@ export default function EventHandlingTest({ onMetrics }: TestProps) {
       });
     };
 
-    btns.value.style.display = 'none';
+    // btns.value.style.display = 'none';
 
     btns.value.innerHTML = '';
     clickCount = 0;
@@ -44,7 +44,7 @@ export default function EventHandlingTest({ onMetrics }: TestProps) {
     }
 
     btns.value.appendChild(fragment);
-    btns.value.style.display = 'grid';
+    // btns.value.style.display = 'grid';
 
     requestAnimationFrame(() => {
       const endTime = performance.now();
