@@ -5,52 +5,48 @@ interface TestProps {
 }
 
 export default function EventHandlingTest({ onMetrics }: TestProps) {
-  const handleClick = (id: number): void => {
-    const startTime = performance.now();
-    clickCount++;
-    clickCountDiv.value.textContent = `Total Clicks: ${clickCount}`;
-    clickCountDiv.value.style.display = 'block';
-    const endTime = performance.now();
-
-    onMetrics({
-      'Last Click': `Button ${id}`,
-      'Response Time': `${(endTime - startTime).toFixed(4)} ms`,
-      'Total Clicks': clickCount,
-    });
-  };
-
   const createButtons = (count: number): void => {
     const startTime = performance.now();
     const startMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
-    const children = btns.value.children;
-    btns.value.style.display = 'none';
-    if (count === children.length) {
-      for (let i = 0; i < children.length; i++) {
-        const b = children[i];
-        b.firstChild!.nodeValue = `Btn ${Math.random()}`;
-        b.addEventListener('click', () => handleClick(i));
-      }
-    } else {
-      btns.value.innerHTML = '';
-      clickCount = 0;
-      clickCountDiv.value.style.display = 'none';
-
-      const fragment = document.createDocumentFragment();
-      for (let i = 0; i < count; i++) {
-        const btn = (
-          <button on:click={() => handleClick(i)} style="padding: 8px; font-size: 12px;">
-            Btn {Math.random()}
-          </button>
-        );
-        fragment.appendChild(btn);
-      }
-
-      btns.value.appendChild(fragment);
+    if (!btns.value) {
+      return;
     }
-    btns.value.style.display = '';
 
-    setTimeout(() => {
+    const handleClick = (id: number): void => {
+      const startTime = performance.now();
+      clickCount++;
+      clickCountDiv.value.textContent = `Total Clicks: ${clickCount}`;
+      clickCountDiv.value.style.display = 'block';
+      const endTime = performance.now();
+
+      onMetrics({
+        'Last Click': `Button ${id}`,
+        'Response Time': `${(endTime - startTime).toFixed(4)} ms`,
+        'Total Clicks': clickCount,
+      });
+    };
+
+    btns.value.style.display = 'none';
+
+    btns.value.innerHTML = '';
+    clickCount = 0;
+    clickCountDiv.value.style.display = 'none';
+
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+      const btn = (
+        <button on:click={() => handleClick(i)} style="padding: 8px; font-size: 12px;">
+          Btn {Math.random()}
+        </button>
+      );
+      fragment.appendChild(btn);
+    }
+
+    btns.value.appendChild(fragment);
+    btns.value.style.display = 'grid';
+
+    requestAnimationFrame(() => {
       const endTime = performance.now();
       const endMemory = (performance as any).memory?.usedJSHeapSize || 0;
 
@@ -60,7 +56,7 @@ export default function EventHandlingTest({ onMetrics }: TestProps) {
         'Memory Delta': `${((endMemory - startMemory) / 1024 / 1024).toFixed(2)} MB`,
         'Avg per Button': `${((endTime - startTime) / count).toFixed(4)} ms`,
       });
-    }, 0);
+    });
   };
 
   const clearButtons = (): void => {
