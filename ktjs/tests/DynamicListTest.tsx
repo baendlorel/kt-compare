@@ -1,3 +1,5 @@
+import { KTFor, KTHTMLElement } from 'kt.js';
+
 interface TestProps {
   onMetrics: (metrics: Record<string, string | number> | null) => void;
 }
@@ -19,30 +21,30 @@ interface ButtonRefs {
   batchUpdate: HTMLButtonElement;
 }
 
-function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
-  const container = (<div></div>) as HTMLDivElement;
-  const listContainer = (<div style="max-height: 400px; overflow-y: auto; margin-top: 20px;"></div>) as HTMLDivElement;
+function DynamicListTest({ onMetrics }: TestProps) {
+  const container = <div></div>;
 
   let items: ListItem[] = [];
   let idCounter = 0;
   let buttons: Partial<ButtonRefs> = {};
 
-  const renderList = (): void => {
-    listContainer.innerHTML = '';
-    const fragment = document.createDocumentFragment();
-
-    items.forEach((item) => {
-      const itemDiv = (
+  // Create KTFor list component with key-based optimization
+  const listComponent = (
+    <KTFor
+      list={items}
+      key={(item) => item.id}
+      map={(item) => (
         <div class="list-item">
           <span>{item.text}</span>
           <span>{item.value}</span>
         </div>
-      );
-      fragment.appendChild(itemDiv);
-    });
+      )}
+    />
+  ) as any;
 
-    listContainer.appendChild(fragment);
-  };
+  const listContainer = (
+    <div style="max-height: 400px; overflow-y: auto; margin-top: 20px;">{listComponent}</div>
+  ) as KTHTMLElement<HTMLDivElement>;
 
   const initList = (): void => {
     const startTime = performance.now();
@@ -54,7 +56,7 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
     }));
     idCounter = 1000;
 
-    renderList();
+    listComponent.redraw({ list: items });
 
     // Enable operation buttons
     Object.values(buttons).forEach((btn) => {
@@ -74,13 +76,16 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
   const insertAtStart = (): void => {
     const startTime = performance.now();
 
-    items.unshift({
-      id: idCounter++,
-      text: `New Item ${idCounter}`,
-      value: Math.random().toFixed(3),
-    });
+    items = [
+      {
+        id: idCounter++,
+        text: `New Item ${idCounter}`,
+        value: Math.random().toFixed(3),
+      },
+      ...items,
+    ];
 
-    renderList();
+    listComponent.redraw({ list: items });
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -96,13 +101,17 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
     const startTime = performance.now();
     const middleIndex = Math.floor(items.length / 2);
 
-    items.splice(middleIndex, 0, {
-      id: idCounter++,
-      text: `New Item ${idCounter}`,
-      value: Math.random().toFixed(3),
-    });
+    items = [
+      ...items.slice(0, middleIndex),
+      {
+        id: idCounter++,
+        text: `New Item ${idCounter}`,
+        value: Math.random().toFixed(3),
+      },
+      ...items.slice(middleIndex),
+    ];
 
-    renderList();
+    listComponent.redraw({ list: items });
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -117,13 +126,16 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
   const insertAtEnd = (): void => {
     const startTime = performance.now();
 
-    items.push({
-      id: idCounter++,
-      text: `New Item ${idCounter}`,
-      value: Math.random().toFixed(3),
-    });
+    items = [
+      ...items,
+      {
+        id: idCounter++,
+        text: `New Item ${idCounter}`,
+        value: Math.random().toFixed(3),
+      },
+    ];
 
-    renderList();
+    listComponent.redraw({ list: items });
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -137,8 +149,8 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
 
   const deleteFromStart = (): void => {
     const startTime = performance.now();
-    items.shift();
-    renderList();
+    items = items.slice(1);
+    listComponent.redraw({ list: items });
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -153,8 +165,8 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
   const deleteFromMiddle = (): void => {
     const startTime = performance.now();
     const middleIndex = Math.floor(items.length / 2);
-    items.splice(middleIndex, 1);
-    renderList();
+    items = [...items.slice(0, middleIndex), ...items.slice(middleIndex + 1)];
+    listComponent.redraw({ list: items });
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -168,8 +180,8 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
 
   const deleteFromEnd = (): void => {
     const startTime = performance.now();
-    items.pop();
-    renderList();
+    items = items.slice(0, -1);
+    listComponent.redraw({ list: items });
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -184,13 +196,22 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
   const batchUpdate = (): void => {
     const startTime = performance.now();
 
-    // Update 100 random items
-    for (let i = 0; i < 100; i++) {
+    // Update 100 random items - create new array with updated values
+    items = items.map((item) => {
+      if (Math.random() < 100 / items.length) {
+        return { ...item, value: Math.random().toFixed(3) };
+      }
+      return item;
+    });
+
+    // Ensure exactly 100 items are updated if random selection didn't hit 100
+    const updateCount = Math.min(100, items.length);
+    for (let i = 0; i < updateCount; i++) {
       const randomIndex = Math.floor(Math.random() * items.length);
-      items[randomIndex].value = Math.random().toFixed(3);
+      items[randomIndex] = { ...items[randomIndex], value: Math.random().toFixed(3) };
     }
 
-    renderList();
+    listComponent.redraw({ list: items });
 
     setTimeout(() => {
       const endTime = performance.now();
@@ -204,42 +225,42 @@ function DynamicListTest({ onMetrics }: TestProps): HTMLDivElement {
 
   // Create buttons and store references
   buttons = {
-    init: (<button on:click={initList}>Initialize (1000 items)</button>) as HTMLButtonElement,
+    init: (<button on:click={initList}>Initialize (1000 items)</button>) as KTHTMLElement<HTMLButtonElement>,
     insertStart: (
       <button on:click={insertAtStart} disabled>
         Insert at Start
       </button>
-    ) as HTMLButtonElement,
+    ) as KTHTMLElement<HTMLButtonElement>,
     insertMiddle: (
       <button on:click={insertAtMiddle} disabled>
         Insert at Middle
       </button>
-    ) as HTMLButtonElement,
+    ) as KTHTMLElement<HTMLButtonElement>,
     insertEnd: (
       <button on:click={insertAtEnd} disabled>
         Insert at End
       </button>
-    ) as HTMLButtonElement,
+    ) as KTHTMLElement<HTMLButtonElement>,
     deleteStart: (
       <button on:click={deleteFromStart} disabled>
         Delete from Start
       </button>
-    ) as HTMLButtonElement,
+    ) as KTHTMLElement<HTMLButtonElement>,
     deleteMiddle: (
       <button on:click={deleteFromMiddle} disabled>
         Delete from Middle
       </button>
-    ) as HTMLButtonElement,
+    ) as KTHTMLElement<HTMLButtonElement>,
     deleteEnd: (
       <button on:click={deleteFromEnd} disabled>
         Delete from End
       </button>
-    ) as HTMLButtonElement,
+    ) as KTHTMLElement<HTMLButtonElement>,
     batchUpdate: (
       <button on:click={batchUpdate} disabled>
         Batch Update (100 items)
       </button>
-    ) as HTMLButtonElement,
+    ) as KTHTMLElement<HTMLButtonElement>,
   };
 
   const controls = (

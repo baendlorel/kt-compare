@@ -16,7 +16,7 @@
     "build:ktjs": "vite build ktjs --config ktjs/vite.config.ts"
   },
   "dependencies": {
-    "kt.js": "^0.15.0",
+    "kt.js": "^0.17.1",
     "vue": "^3.5.27"
   },
   "devDependencies": {

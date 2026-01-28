@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       kt.js:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: ^0.17.1
+        version: 0.17.1
       vue:
         specifier: ^3.5.27
         version: 3.5.27(typescript@5.9.3)
@@ -212,8 +212,8 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
-  '@ktjs/core@0.15.0':
-    resolution: {integrity: sha512-ME/p3+jNF7zpyzOy7R7qCNOjzr1mFDFifrvp4+bsjrg6udlyuK2DBNf6lVP/pRM3/rPh3zqE9OYh+uoPA2xLPw==}
+  '@ktjs/core@0.17.1':
+    resolution: {integrity: sha512-+hynx/cuj7X1bz7MesH5/PCnfTUZFnpYobMiqHHjm7+eLd0IaFZJeP6i1AvsMQMOZCSYmphLh/ACfEgqcCX+PA==}
 
   '@ktjs/core@0.7.3':
     resolution: {integrity: sha512-olX/5Bo50X0PvPIsvGTXMugzyYnsZfusdekRvraBG7rrSk0QrJ4ruOwuL8uRMB/46Sq4xSsjxAVZezJdSCyGyQ==}
@@ -465,8 +465,8 @@ packages:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
 
-  kt.js@0.15.0:
-    resolution: {integrity: sha512-ngVlzrQbAwuuE67LiheotLxD15gM48FcqX3PIQi0lHqRUZ3f4zOWt8Ht4jIbMZz75u3ceTuGEVkG3Gm8h43OTQ==}
+  kt.js@0.17.1:
+    resolution: {integrity: sha512-+4Ce/l8f5WHkKsntt8kbPB6D9gf80VdTC+iGxzp0MndNfm25JfTy0VJRGMuipwUrhC+6b4IuWUl2lpcMhYxbDw==}
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -689,7 +689,7 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@ktjs/core@0.15.0': {}
+  '@ktjs/core@0.17.1': {}
 
   '@ktjs/core@0.7.3': {}
 
@@ -931,9 +931,9 @@ snapshots:
 
   is-number@7.0.0: {}
 
-  kt.js@0.15.0:
+  kt.js@0.17.1:
     dependencies:
-      '@ktjs/core': 0.15.0
+      '@ktjs/core': 0.17.1
       '@ktjs/shortcuts': 0.7.3
 
   magic-string@0.30.21:
